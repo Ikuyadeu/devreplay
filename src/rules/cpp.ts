@@ -1,5 +1,5 @@
 import { rules as c } from './c';
-import { Rule } from '../rule-maker/rule';
+import { Rule } from '../lib/rule-maker/rule';
 
 const cppRules: Rule[] = [
     {
