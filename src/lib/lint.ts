@@ -73,27 +73,24 @@ export function fix(fileName: string, ruleFileName?: string): string {
         throw new Error(`Failed to read ${fileName}`);
     }
     const lintResult = lintWithRules(fileName, fileContents, rules);
-    const detectedRules = lintResult.map(x => { return x.rule; });
-    let fixedContents = fileContents;
-    for (const rule of detectedRules) {
-        fixedContents = fixWithRule(fixedContents, rule);
-    }
+    const warnedRules = lintResult.map(x => { return x.rule; });
 
-    return fixedContents;
+    return fixWithRules(fileContents, warnedRules);
 }
 
 /**
  * Generate fixed string by using rule regular expression
  * @param content Prefixed content
- * @param rule Rule that has regular expression
+ * @param rules Rules that has regular expression
  */
-export function fixWithRule(content: string, rule: Rule): string {
-    const replace = ruleJoin(rule.after);
-    const regExp = createRegExp(rule);
-    const match = regExp.exec(content);
-    if (match) {
-        const replaceString = replaceWithCaseOperations(content, regExp, replace);
-        return replaceString;
+export function fixWithRules(content: string, rules: Rule[]): string {
+    for (const rule of rules) {
+        const replace = ruleJoin(rule.after);
+        const regExp = createRegExp(rule);
+        if (regExp.exec(content)) {
+            content = replaceWithCaseOperations(content, regExp, replace);
+            continue;
+        }
     }
     return content;
 }

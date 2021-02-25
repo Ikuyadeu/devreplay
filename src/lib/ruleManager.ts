@@ -5,6 +5,8 @@ import { extend as Extend } from './extend';
 import { tryReadFile } from './file';
 import { Rule } from './rule-maker/rule';
 
+type ReadableRule = Rule | string
+
 export function writeRuleFile(rules: Rule[], dirPath: string): void {
     const outRules = readCurrentRules(dirPath).concat(rules);
     const ruleStr = JSON.stringify(outRules, undefined, 2);
@@ -28,15 +30,13 @@ export function readRuleFile(ruleFileName?: string): Rule[] {
     }
     const ruleContent = readFileSync(location).toString();
     try {
-        const ruleJson = JSON.parse(ruleContent) as Rule[];
+        const ruleJson = JSON.parse(ruleContent) as ReadableRule[];
         let rules: Rule[] = [];
         for (const rule of ruleJson) {
-            if (rule.extends === undefined) {
-                rules.push(rule);
+            if (typeof rule === 'string') {
+                rules = rules.concat(readExtends(rule));
             } else {
-                for (const extend of rule.extends) {
-                    rules = rules.concat(readExtends(extend));
-                }
+                rules.push(rule);
             }
         }
 
@@ -73,7 +73,7 @@ function readCurrentRules(dirPath: string): Rule[] {
  * @param extend rule definition
  * @return Rule list that are defined by `extend`
  */
-function readExtends(extend: string): Rule[] {
+export function readExtends(extend: string): Rule[] {
     let location;
     if (Extend[extend] !== undefined) {
         return Extend[extend];
@@ -88,7 +88,7 @@ function readExtends(extend: string): Rule[] {
         const ruleJson = JSON.parse(ruleContent) as Rule[];
         const rules: Rule[] = [];
         for (const rule of ruleJson) {
-            if (rule.extends === undefined) {
+            if (typeof rule !== 'string') {
                 rules.push(rule);
             }
         }

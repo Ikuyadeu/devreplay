@@ -11,7 +11,6 @@ export interface Rule {
     /** Replace target code */
     after: string[] | string;
     ruleId?: string;
-    extends?: string[];
     author?: string;
     severity?: severity;
     message?: string;

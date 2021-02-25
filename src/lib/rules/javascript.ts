@@ -93,13 +93,15 @@ export const rules: Rule[] = [
     },
     {
       before: [
-        'for (let $3 = 0;i < $1.length;i++) $2($1[$3])'
+        'for \\(let (?<i>.+) = 0;\\k<i> < (?<arr>.+).length;\\k<i>\\+\\+\\) (.*)\\(\\k<arr>\\[\\k<i>\\]\\)'
       ],
       after: [
-        'for (let $3 = 0;i < $1.length;i++) {',
-        '    $2($1[$3])',
+        'for (let $1 = 0;$1 < $2.length;i++) {',
+        '    $3($2[$1])',
         '}'
-      ]
+      ],
+      isRegex: true,
+      message: 'One line for should use paren'
     },
     {
       before: [
@@ -137,7 +139,17 @@ export const rules: Rule[] = [
     },
     {
       before: [
-        'new String($1)'
+        'new String\\((.*)\\)'
+      ],
+      after: [
+        '$1'
+      ],
+      severity: 'Information',
+      isRegex: true
+    },
+    {
+      before: [
+        'new Symbol\\((.*)\\)'
       ],
       after: [
         '$1'
@@ -146,20 +158,12 @@ export const rules: Rule[] = [
     },
     {
       before: [
-        'new Symbol($1)'
-      ],
-      after: [
-        '$1'
-      ],
-      severity: 'Information'
-    },
-    {
-      before: [
-        'new $1;'
+        'new \\(.*\\);'
       ],
       after: [
         'new $1();'
       ],
+      isRegex: true,
       message: 'Never invoke a constructor in a new statement without using parentheses'
     },
     {
