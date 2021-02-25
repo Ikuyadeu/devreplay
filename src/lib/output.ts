@@ -52,7 +52,7 @@ export function outputLintOuts(lintouts: LintOut[]): string {
         } else if (informationCount > 0) {
             summary = chalk.blue(summary);
         }
-        output += chalk.bold(summary);
+        output += summary;
     }
     return output;
 }
@@ -63,7 +63,8 @@ export function outputLintOuts(lintouts: LintOut[]): string {
  */
 export function formatLintOut(matched: LintOut): string[] {
     const severity = makeFullSeverity(matched.rule.severity);
-    const position = `${matched.fileName}:${matched.position.start.line}:${matched.position.start.character}`;
+    const range = chalk.gray(`:${matched.position.start.line}:${matched.position.start.character}`);
+    const position = `${matched.fileName}${range}`;
     const message = `${code2String(matched.rule)}`;
     return [position, severity, message];
 }

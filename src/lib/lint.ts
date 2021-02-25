@@ -63,16 +63,11 @@ export function lintWithRules(fileName: string, contents: string, rules: Rule[])
  * @param ruleFileName Target DevReplay rule file path
  */
 export function fix(fileName: string, ruleFileName?: string): string {
-    let rules = readRuleFile(ruleFileName);
-    if (rules === []) {
-        rules = getInitRules(fileName);
-    }
-
     const fileContents = tryReadFile(fileName);
     if (fileContents === undefined) {
         throw new Error(`Failed to read ${fileName}`);
     }
-    const lintResult = lintWithRules(fileName, fileContents, rules);
+    const lintResult = lint([fileName], ruleFileName);
     const warnedRules = lintResult.map(x => { return x.rule; });
 
     return fixWithRules(fileContents, warnedRules);
