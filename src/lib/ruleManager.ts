@@ -10,21 +10,21 @@ type ReadableRule = Rule | string
 export function writeRuleFile(rules: Rule[], dirPath: string): void {
     const outRules = readCurrentRules(dirPath).concat(rules);
     const ruleStr = JSON.stringify(outRules, undefined, 2);
-    const filePath = join(dirPath, './devreplay.json');
+    const filePath = join(dirPath, './.devreplay.json');
     writeFileSync(filePath, ruleStr);
 }
 
 /**
  * Read the rules from the defined rule file
  * @param ruleFileName 
- * @return Rule list that are included `devreplay.json`
+ * @return Rule list that are included `.devreplay.json`
  */
 export function readRuleFile(ruleFileName?: string): Rule[] {
     let location;
     if (ruleFileName !== undefined && existsSync(ruleFileName)) {
         location = ruleFileName;
-    } else if ((existsSync('./devreplay.json'))) {
-        location = 'devreplay.json';
+    } else if ((existsSync('./.devreplay.json'))) {
+        location = '.devreplay.json';
     } else {
         return [];
     }
@@ -50,12 +50,12 @@ export function readRuleFile(ruleFileName?: string): Rule[] {
 }
 
 /**
- * Read the rules from the directory `devreplay.json` file
- * @param dirPath The target directory that has devreplay.json
+ * Read the rules from the directory `.devreplay.json` file
+ * @param dirPath The target directory that has .devreplay.json
  * @return Rule list that are defined in the rule file
  */
 function readCurrentRules(dirPath: string): Rule[] {
-    const rulePath = join(dirPath, 'devreplay.json');
+    const rulePath = join(dirPath, '.devreplay.json');
     let fileContents = undefined;
     try{
         fileContents =  tryReadFile(rulePath);
